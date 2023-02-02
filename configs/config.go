@@ -2,26 +2,16 @@ package configs
 
 import (
 	"github.com/spf13/viper"
-	"log"
 )
 
-type Config struct {
-	Port  string
-	DbUrl string
-}
+var cfg *viper.Viper
 
-func GetConfig() Config {
-	viper.SetConfigFile("./.env")
+func GetConfig() error {
+	viper.AddConfigPath("../")
+	viper.SetConfigFile("config.json")
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal("error trying read from config: %w", err)
+		return err
 	}
 
-	port := viper.Get("PORT").(string)
-	dbUrl := viper.Get("DB_URL").(string)
-	result := Config{
-		Port:  port,
-		DbUrl: dbUrl,
-	}
-
-	return result
+	return nil
 }

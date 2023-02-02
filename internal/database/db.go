@@ -2,16 +2,30 @@ package database
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
+
+	_ "github.com/lib/pq"
+	"github.com/spf13/viper"
 )
 
-func Init(driver string, dbName string) *sql.DB {
-	db, err := sql.Open(driver, "database"+string(dbName))
-	if err != nil {
-		// This will not be a connection error, but a DSN parse error or
-		// another initialization error.
-		log.Fatal(err)
+var DB *sql.DB
+
+func CreateConnection() error {
+	var err error
+
+	if DB, err = sql.Open("postgres", fmt.Sprintf("host=%s port=%v user=%s dbname=%s password=%s sslmode=%s",
+		viper.GetString("postgres.host"),
+		viper.GetString("postgres.port"),
+		viper.GetString("postgres.user"),
+		viper.GetString("postgres.dbname"),
+		viper.GetString("postgres.password"),
+		viper.GetString("postgres.sslmode"))); err != nil {
+		return err
 	}
 
-	return db
+	if err = DB.Ping(); err != nil {
+		return err
+	}
+
+	return nil
 }

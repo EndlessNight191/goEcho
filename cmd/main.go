@@ -1,29 +1,31 @@
-package main
+package cmd
 
 import (
-	"echoTest/configs"
-	"echoTest/internal/database"
-	"echoTest/internal/routes"
-	"fmt"
-	"github.com/labstack/echo/v4"
+	"configs"
+	"goEcho/internal/database"
+	"log"
 	"net/http"
+
+	"github.com/spf13/viper"
 )
 
 func main() {
-	config := configs.GetConfig()
+	if err := configs.GetConfig(); err != nil {
+		log.Fatalf("error trying initialize config: %v", err)
+	}
 
-	db := database.Init("postgres", "config.DbUrl")
-	fmt.Print(config.DbUrl, config.Port)
+	if err := database.CreateConnection(); err != nil {
+		log.Fatal(err)
+	}
 
 	e := echo.New()
 
-	g := e.Group("/admin")
-	routes.PostRoute(g)
+	// g := e.Group("/admin")
+	// routes.PostRoute(g)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	s := ":"
-	e.Logger.Fatal(e.Start(string(s) + config.Port))
+	e.Logger.Fatal(e.Start(":" + viper.GetString("port")))
 }
