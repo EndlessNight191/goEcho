@@ -1,11 +1,13 @@
-package cmd
+package main
 
 import (
-	"configs"
+	"goEcho/configs"
 	"goEcho/internal/database"
+	"goEcho/internal/routes"
 	"log"
 	"net/http"
 
+	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 )
 
@@ -20,8 +22,8 @@ func main() {
 
 	e := echo.New()
 
-	// g := e.Group("/admin")
-	// routes.PostRoute(g)
+	g := e.Group("/admin")
+	routes.PostRoutes(g)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")

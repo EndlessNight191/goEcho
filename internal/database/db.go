@@ -19,7 +19,8 @@ func CreateConnection() error {
 		viper.GetString("postgres.user"),
 		viper.GetString("postgres.dbname"),
 		viper.GetString("postgres.password"),
-		viper.GetString("postgres.sslmode"))); err != nil {
+		viper.GetString("postgres.sslmode"),
+	)); err != nil {
 		return err
 	}
 
