@@ -1,9 +1,10 @@
 package routes
 
 import (
-	//"goEcho/internal/controllers"
 	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"goEcho/internal/controllers"
 )
 
 func PostRoutes(e *echo.Group) {
@@ -11,8 +12,9 @@ func PostRoutes(e *echo.Group) {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, 2!")
 	})
+	e.POST("/", controllers.CreatePost)
 
-	//e.GET("/:id", controllers.FindPost)
-	//e.PUT("/:id", controllers.UpdatePost)
-	//e.DELETE("/:id", controllers.DeletePost)
+	e.GET("/:id(\\d++)", controllers.GetPostById)
+	e.PUT("/:id(\\d++)", controllers.UpdatePostById)
+	e.DELETE("/:id(\\d++)", controllers.DeletePostById)
 }

@@ -6,7 +6,7 @@ import (
 	"goEcho/internal/model/structs"
 )
 
-func GetPostById(id int) (*sql.Rows, error) {
+func GetPostById(id string) (*sql.Rows, error) {
 	post, err := database.DB.Query(
 		"select * from posts (id) values ($1)",
 		id)
@@ -16,8 +16,14 @@ func GetPostById(id int) (*sql.Rows, error) {
 	return post, nil
 }
 
-func FindAllPost(limit int, offset int) []*structs.Post {
-	return nil
+func FindAllPost(limit int, offset int) (*sql.Rows, error) {
+	posts, err := database.DB.Query(
+		"select * from posts OFFSET $1 ROWS FETCH NEXT $2 ROWS ONLY;",
+		limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	return posts, nil
 }
 
 func CreatePost(post *structs.Post) (*structs.Post, error) {
@@ -40,6 +46,12 @@ func UpdatePostById(id int, postUpdate *structs.Post) (*structs.Post, error) {
 	return postUpdate, nil
 }
 
-func DeleteOnePost() error {
+func DeleteOnePostById(id int) error {
+	_, err := database.DB.Exec(
+		"delete posts where id = $1",
+		id)
+	if err != nil {
+		return err
+	}
 	return nil
 }

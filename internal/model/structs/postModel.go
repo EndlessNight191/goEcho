@@ -1,8 +1,8 @@
 package structs
 
 type Post struct {
-	Title    string
-	Content  string
-	AuthorId int
-	Image    string
+	Title    string `json:"Title"`
+	Content  string `json:"Content"`
+	AuthorId int    `json:"AuthorId"`
+	Image    string `json:"Image"`
 }
