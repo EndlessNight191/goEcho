@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/labstack/echo/v4"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 
 	"goEcho/internal/model/queryes"
 	"goEcho/internal/model/structs"
@@ -10,6 +11,7 @@ import (
 )
 
 func GetPostById(c echo.Context) error {
+	c.Param()
 	post, err := services.GetPostById(c.QueryParam("id"))
 	if err != nil {
 		return err
@@ -26,6 +28,7 @@ func CreatePost(c echo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return err
 	}
+
 	result, err := queryes.CreatePost(u)
 	if err != nil {
 		return err

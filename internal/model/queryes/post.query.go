@@ -4,35 +4,63 @@ import (
 	"database/sql"
 	"goEcho/internal/database"
 	"goEcho/internal/model/structs"
+
+	"github.com/pingcap/errors"
 )
 
-func GetPostById(id string) (*sql.Rows, error) {
-	post, err := database.DB.Query(
-		"select * from posts (id) values ($1)",
-		id)
-	if err != nil {
-		return nil, err
+func GetPostById(id string) (*structs.Post, error) {
+	var post structs.Post
+
+	if err := database.DB.QueryRow(`SELECT
+	id, title, content, author_id, image 
+	FROM posts(id) VALUES($1)`,
+		id).Scan(
+		&post.ID,
+		&post.Title,
+		&post.Content,
+		&post.AuthorId,
+		&post.Image,
+	); err != nil {
+		return nil, errors.Wrap(err, "fasdfasdfa")
 	}
-	return post, nil
+
+	return &post, nil
 }
 
-func FindAllPost(limit int, offset int) (*sql.Rows, error) {
-	posts, err := database.DB.Query(
-		"select * from posts OFFSET $1 ROWS FETCH NEXT $2 ROWS ONLY;",
-		limit, offset)
+func FindAllPost(limit int, offset int) ([]structs.Post, error) {
+	var posts []structs.Post
+	posts := make([]structs.Post, 0, limit)
+
+	rows, err := database.DB.Query("select * from posts OFFSET $1 LIMIT $2;", limit, offset)
 	if err != nil {
 		return nil, err
 	}
+
+	for rows.Next(){
+		var post structs.Post
+
+		if err := rows.Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.AuthorId,
+			&post.Image,
+			); err != nil{
+			return nil, err
+		}
+
+		posts = append(posts, post)
+	}
+
 	return posts, nil
 }
 
 func CreatePost(post *structs.Post) (*structs.Post, error) {
-	_, err := database.DB.Exec(
-		"insert into posts (title, content, authorId, image) values ($1, $2, $3, $4)",
-		post.Title, post.Content, post.AuthorId, post.Image)
+	if _, err := database.DB.Exec("insert into posts (title, content, authorId, image) values ($1, $2, $3, $4)", post.Title, post.Content, post.AuthorId, post.Image)
 	if err != nil {
 		return nil, err
 	}
+
 	return post, nil
 }
 
