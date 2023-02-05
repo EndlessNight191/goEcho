@@ -1,14 +1,14 @@
 package queryes
 
 import (
-	"database/sql"
+	_ "database/sql"
 	"goEcho/internal/database"
 	"goEcho/internal/model/structs"
 
 	"github.com/pingcap/errors"
 )
 
-func GetPostById(id string) (*structs.Post, error) {
+func GetPostById(id int) (*structs.Post, error) {
 	var post structs.Post
 
 	if err := database.DB.QueryRow(`SELECT
@@ -21,7 +21,7 @@ func GetPostById(id string) (*structs.Post, error) {
 		&post.AuthorId,
 		&post.Image,
 	); err != nil {
-		return nil, errors.Wrap(err, "fasdfasdfa")
+		return nil, errors.Wrap(err, "QueryRow")
 	}
 
 	return &post, nil
@@ -29,14 +29,14 @@ func GetPostById(id string) (*structs.Post, error) {
 
 func FindAllPost(limit int, offset int) ([]structs.Post, error) {
 	var posts []structs.Post
-	posts := make([]structs.Post, 0, limit)
+	posts = make([]structs.Post, 0, limit)
 
-	rows, err := database.DB.Query("select * from posts OFFSET $1 LIMIT $2;", limit, offset)
+	rows, err := database.DB.Query("SELECT id, title, content, author_id, image  FROM posts OFFSET $1 LIMIT $2", limit, offset)
 	if err != nil {
 		return nil, err
 	}
 
-	for rows.Next(){
+	for rows.Next() {
 		var post structs.Post
 
 		if err := rows.Scan(
@@ -45,7 +45,7 @@ func FindAllPost(limit int, offset int) ([]structs.Post, error) {
 			&post.Content,
 			&post.AuthorId,
 			&post.Image,
-			); err != nil{
+		); err != nil {
 			return nil, err
 		}
 
@@ -56,8 +56,9 @@ func FindAllPost(limit int, offset int) ([]structs.Post, error) {
 }
 
 func CreatePost(post *structs.Post) (*structs.Post, error) {
-	if _, err := database.DB.Exec("insert into posts (title, content, authorId, image) values ($1, $2, $3, $4)", post.Title, post.Content, post.AuthorId, post.Image)
-	if err != nil {
+	if _, err := database.DB.Exec(
+		"insert into posts (title, content, authorId, image) values ($1, $2, $3, $4)",
+		post.Title, post.Content, post.AuthorId, post.Image); err != nil {
 		return nil, err
 	}
 
@@ -81,5 +82,6 @@ func DeleteOnePostById(id int) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
