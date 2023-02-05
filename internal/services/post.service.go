@@ -1,13 +1,11 @@
 package services
 
 import (
-	"database/sql"
-	"github.com/labstack/echo/v4"
 	"goEcho/internal/model/queryes"
 	"goEcho/internal/model/structs"
 )
 
-func GetPostById(id string) (*sql.Rows, error) {
+func GetPostById(id string) (*structs.Post, error) {
 	post, err := queryes.GetPostById(id)
 	if err != nil {
 		return nil, err
@@ -15,7 +13,7 @@ func GetPostById(id string) (*sql.Rows, error) {
 	return post, nil
 }
 
-func GetPosts(c echo.Context) error {
+func GetPosts(limit int, offset int) error {
 	return nil
 }
 

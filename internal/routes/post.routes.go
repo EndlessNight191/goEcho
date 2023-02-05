@@ -12,14 +12,14 @@ import (
 func PostRoutes() {
 	e := echo.New()
 
-	g := e.Group("/post")
-
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+		return c.String(http.StatusOK, "Hello, world")
 	})
 
+	g := e.Group("/api/post")
+
 	g.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, 2!")
+		return c.String(http.StatusOK, "Hello, POST!")
 	})
 	g.POST("/", controllers.CreatePost)
 

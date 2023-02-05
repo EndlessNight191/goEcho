@@ -5,14 +5,13 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"goEcho/internal/model/queryes"
 	"goEcho/internal/model/structs"
 	"goEcho/internal/services"
 )
 
 func GetPostById(c echo.Context) error {
-	c.Param()
-	post, err := services.GetPostById(c.QueryParam("id"))
+	id := c.Param("id")
+	post, err := services.GetPostById(id)
 	if err != nil {
 		return err
 	}
@@ -29,11 +28,11 @@ func CreatePost(c echo.Context) error {
 		return err
 	}
 
-	result, err := queryes.CreatePost(u)
+	resultCreate, err := services.CreatePost(u)
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, resultCreate)
 }
 
 func UpdatePostById(c echo.Context) error {
