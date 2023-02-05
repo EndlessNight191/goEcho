@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"net/http"
+	"strconv"
 
 	"goEcho/internal/model/structs"
 	"goEcho/internal/services"
@@ -11,7 +11,12 @@ import (
 
 func GetPostById(c echo.Context) error {
 	id := c.Param("id")
-	post, err := services.GetPostById(id)
+	s, err := strconv.ParseInt(id, 10, 32)
+	if err != nil {
+		return err
+	}
+
+	post, err := services.GetPostById(int(s))
 	if err != nil {
 		return err
 	}
@@ -19,7 +24,24 @@ func GetPostById(c echo.Context) error {
 }
 
 func GetPosts(c echo.Context) error {
-	return nil
+	limit := c.QueryParam("limit")
+	offset := c.QueryParam("offset")
+
+	limitS, err := strconv.ParseInt(limit, 10, 32)
+	if err != nil {
+		return err
+	}
+	offsetS, err := strconv.ParseInt(offset, 10, 32)
+	if err != nil {
+		return err
+	}
+
+	posts, err := services.GetPosts(int(limitS), int(offsetS))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, posts)
 }
 
 func CreatePost(c echo.Context) error {
@@ -36,9 +58,37 @@ func CreatePost(c echo.Context) error {
 }
 
 func UpdatePostById(c echo.Context) error {
-	return nil
+	id := c.Param("id")
+	s, err := strconv.ParseInt(id, 10, 32)
+	if err != nil {
+		return err
+	}
+
+	u := new(structs.Post)
+	if err := c.Bind(u); err != nil {
+		return err
+	}
+
+	postUpdate, err := services.UpdatePostById(int(s), u)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, postUpdate)
 }
 
 func DeletePostById(c echo.Context) error {
-	return nil
+	id := c.Param("id")
+	s, err := strconv.ParseInt(id, 10, 32)
+	if err != nil {
+		return err
+	}
+
+	err = services.DeletePostById(int(s))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, "success")
+
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/pingcap/errors"
 )
 
-func GetPostById(id string) (*structs.Post, error) {
+func GetPostById(id int) (*structs.Post, error) {
 	var post structs.Post
 
 	if err := database.DB.QueryRow(`SELECT

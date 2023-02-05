@@ -5,7 +5,7 @@ import (
 	"goEcho/internal/model/structs"
 )
 
-func GetPostById(id string) (*structs.Post, error) {
+func GetPostById(id int) (*structs.Post, error) {
 	post, err := queryes.GetPostById(id)
 	if err != nil {
 		return nil, err
@@ -13,8 +13,13 @@ func GetPostById(id string) (*structs.Post, error) {
 	return post, nil
 }
 
-func GetPosts(limit int, offset int) error {
-	return nil
+func GetPosts(limit int, offset int) ([]structs.Post, error) {
+	posts, err := queryes.FindAllPost(limit, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	return posts, nil
 }
 
 func CreatePost(post *structs.Post) (*structs.Post, error) {
@@ -26,6 +31,14 @@ func CreatePost(post *structs.Post) (*structs.Post, error) {
 }
 
 func UpdatePostById(id int, postUpdate *structs.Post) (*structs.Post, error) {
+	post, err := GetPostById(id)
+	if err != nil {
+		return nil, err
+	}
+	if post == nil {
+		return nil, nil
+	}
+
 	resultUpdate, err := queryes.UpdatePostById(id, postUpdate)
 	if err != nil {
 		return nil, err
@@ -34,7 +47,12 @@ func UpdatePostById(id int, postUpdate *structs.Post) (*structs.Post, error) {
 }
 
 func DeletePostById(id int) error {
-	err := queryes.DeleteOnePostById(id)
+	post, err := GetPostById(id)
+	if err != nil || post == nil {
+		return err
+	}
+
+	err = queryes.DeleteOnePostById(id)
 	if err != nil {
 		return err
 	}
