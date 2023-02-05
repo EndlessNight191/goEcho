@@ -55,7 +55,7 @@ func FindAllPost(limit int, offset int) ([]structs.Post, error) {
 	return posts, nil
 }
 
-func CreatePost(post *structs.Post) (*structs.Post, error) {
+func CreatePost(post structs.Post) (*structs.Post, error) {
 	if _, err := database.DB.Exec(
 		"insert into posts (title, content, authorId, image) values ($1, $2, $3, $4)",
 		post.Title, post.Content, post.AuthorId, post.Image); err != nil {
