@@ -31,7 +31,7 @@ func FindAllPost(limit int, offset int) ([]structs.Post, error) {
 	var posts []structs.Post
 	posts = make([]structs.Post, 0, limit)
 
-	rows, err := database.DB.Query("select * from posts OFFSET $1 LIMIT $2", limit, offset)
+	rows, err := database.DB.Query("SELECT id, title, content, author_id, image  FROM posts OFFSET $1 LIMIT $2", limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -82,5 +82,6 @@ func DeleteOnePostById(id int) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

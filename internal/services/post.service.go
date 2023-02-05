@@ -25,10 +25,18 @@ func CreatePost(post *structs.Post) (*structs.Post, error) {
 	return post, nil
 }
 
-func UpdatePostById() error {
-	return nil
+func UpdatePostById(id int, postUpdate *structs.Post) (*structs.Post, error) {
+	resultUpdate, err := queryes.UpdatePostById(id, postUpdate)
+	if err != nil {
+		return nil, err
+	}
+	return resultUpdate, nil
 }
 
-func DeletePostById() error {
+func DeletePostById(id int) error {
+	err := queryes.DeleteOnePostById(id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
