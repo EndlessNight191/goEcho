@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS posts (
     created_at date DEFAULT CURRENT_DATE NOT NULL,
     updated_at date DEFAULT CURRENT_DATE NOT NULL,
     deleted_at date
-
 );
 
 CREATE TABLE IF NOT EXISTS tokens (
